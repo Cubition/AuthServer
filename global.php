@@ -14,6 +14,10 @@ header ('Content-type: text/plain; charset=utf-8');
 
 define('BASEDIR', realpath(__DIR__));
 
+// # Check for CloudFlare IP header
+if (!empty ($_SERVER['HTTP_CF_CONNECTING_IP']))
+    $_SERVER ['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+
 ## REGION functions ##
 {
     // # Error Function
@@ -21,13 +25,23 @@ define('BASEDIR', realpath(__DIR__));
     {
         exit('[Cubition PHPAuth] Error' . ($code > - 1 ? ' #' . $code : '') . ':'. PHP_EOL . $text . PHP_EOL);
     }
-    
+
     function usernameExists($username)
     {
         global $db;
         $query = $db->prepare('SELECT 0 FROM auth_users WHERE username = :username LIMIT 1');
         $query->execute(array(
             ':username' => $username
+        ));
+        return $query->rowCount() == 1;
+    }
+
+    function emailExists($email)
+    {
+        global $db;
+        $query = $db->prepare('SELECT 0 FROM auth_users WHERE email = :email LIMIT 1');
+        $query->execute(array(
+            ':email' => email
         ));
         return $query->rowCount() == 1;
     }
