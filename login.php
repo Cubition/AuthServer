@@ -12,14 +12,14 @@ use \PDO, \PDOException;
 require_once __DIR__ . '/global.php';
 
 // # Validate user input
-if (empty($_POST['username']) || empty($_POST['password']) || strlen($_POST['username']) > 16)
+if (empty($_REQUEST['username']) || empty($_REQUEST['password']) || strlen($_REQUEST['username']) > 16)
     exit('-1');
 
 // # Prepare & Execute the is-there-such-a-user query
 $query = $db->prepare('SELECT user_id FROM auth_users WHERE username = :username AND password = :password LIMIT 1');
 $query->execute(array(
-    ':username' => $_POST['username'],
-    ':password' => crypt($_POST['password'], userPassHash($_POST['username']))
+    ':username' => $_REQUEST['username'],
+    ':password' => crypt($_REQUEST['password'], userPassHash($_REQUEST['username']))
 ));
 
 // # If there is no such user, #ragequit
